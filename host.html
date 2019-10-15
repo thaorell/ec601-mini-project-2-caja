@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>Caja host page</title>
+    <script type="text/javascript"
+            src="//caja.appspot.com/caja.js">
+    </script>
+  </head>
+
+  <body>
+    <h1>Caja host page</h1>
+    <div id="guest-get" style="height: 100px;"></div>
+    <div id="guest-set" style="height: 100px;"></div>
+    <script type="text/javascript">
+      var shared = (function (x) {  // (1)
+        return {
+          get: function () { return x; },
+          set: function (x_) { x = '' + x_; }  // (2)
+        };
+      })("");
+
+      caja.initialize({
+        cajaServer: 'https://caja.appspot.com/',
+        debug: true
+      });
+      caja.load(document.getElementById('guest-get'), undefined, function(frame) {
+        var tamedGet = caja.tame(caja.markFunction(shared.get));
+        frame.code('https://developers.google.com/caja/demos/allowingcooperation/guest-get.html',
+                   'text/html')
+             .api({ get: tamedGet })  // (3)
+             .run();
+      });
+      caja.load(document.getElementById('guest-set'), undefined, function(frame) {
+        var tamedSet = caja.tame(caja.markFunction(shared.set));
+
+        frame.code('https://developers.google.com/caja/demos/allowingcooperation/guest-set.html',
+                   'text/html')
+             .api({ set: tamedSet })  // (4)
+             .run();
+      });
+    </script>
+  </body>
+</html>
